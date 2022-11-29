@@ -401,6 +401,15 @@ private:
                   msg->angular_velocity.y,
                   msg->angular_velocity.z);
     }
+    if(imu_type==OAKD)
+    {
+      acc = Vec3(-msg->linear_acceleration.z,
+                 -msg->linear_acceleration.y,
+                 msg->linear_acceleration.x);
+      gyro = Vec3(msg->angular_velocity.z,
+                  msg->angular_velocity.y,
+                  -msg->angular_velocity.x);
+    }
 
 
 
