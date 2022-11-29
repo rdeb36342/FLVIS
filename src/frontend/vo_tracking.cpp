@@ -37,6 +37,7 @@ namespace flvis_ns
 enum TYPEOFIMU{D435I,
                EuRoC_MAV,
                PIXHAWK,
+               OAKD,
                NONE};
 
 class TrackingNodeletClass : public nodelet::Nodelet
@@ -145,6 +146,7 @@ private:
     if(vi_type_from_yaml==VI_TYPE_D435I_STEREO)       {cam_type=STEREO_RECT;   imu_type=D435I;}
     if(vi_type_from_yaml==VI_TYPE_KITTI_STEREO)       {cam_type=STEREO_RECT;   imu_type=NONE;}
     if(vi_type_from_yaml==VI_TYPE_D435_STEREO_PIXHAWK) {cam_type=STEREO_RECT;  imu_type=PIXHAWK;}
+    if(vi_type_from_yaml==VI_TYPE_OAKD_STEREO)        {cam_type=STEREO_UNRECT;  imu_type=OAKD;}
 
 
     if(vi_type_from_yaml == VI_TYPE_D435I_DEPTH || vi_type_from_yaml == VI_TYPE_D435_DEPTH_PIXHAWK)
@@ -213,6 +215,50 @@ private:
                         vi_para,
                         dr_para,
                         50,
+                        false);
+    }
+    if(vi_type_from_yaml == VI_TYPE_OAKD_STEREO) 
+    {
+      printf("Stereo mode \n");
+      int w = getIntVariableFromYaml(configFilePath,             "image_width");
+      int h = getIntVariableFromYaml(configFilePath,             "image_height");
+      cv::Mat K0 = cameraMatrixFromYamlIntrinsics(configFilePath,"cam0_intrinsics");
+      cv::Mat D0 = distCoeffsFromYaml(configFilePath,            "cam0_distortion_coeffs");
+      cv::Mat K1 = cameraMatrixFromYamlIntrinsics(configFilePath,"cam1_intrinsics");
+      cv::Mat D1 = distCoeffsFromYaml(configFilePath,            "cam1_distortion_coeffs");
+      Mat4x4  mat_imu_cam  = Mat44FromYaml(configFilePath,       "T_imu_cam0");
+      Mat4x4  mat_cam0_cam1  = Mat44FromYaml(configFilePath,     "T_cam0_cam1");
+      SE3 T_i_c0 = SE3(mat_imu_cam.topLeftCorner(3,3),
+                       mat_imu_cam.topRightCorner(3,1));
+      SE3 T_c0_c1 = SE3(mat_cam0_cam1.topLeftCorner(3,3),
+                        mat_cam0_cam1.topRightCorner(3,1));
+      SE3 T_c1_c0 = T_c0_c1.inverse();
+      Mat3x3 R_ = T_c1_c0.rotation_matrix();
+      Vec3   T_ = T_c1_c0.translation();
+      cv::Mat R__ = (cv::Mat1d(3, 3) <<
+                     R_(0,0), R_(0,1), R_(0,2),
+                     R_(1,0), R_(1,1), R_(1,2),
+                     R_(2,0), R_(2,1), R_(2,2));
+      cv::Mat T__ = (cv::Mat1d(3, 1) << T_(0), T_(1), T_(2));
+      cv::Mat R0,R1,P0,P1,Q;
+      cv::stereoRectify(K0,D0,K1,D1,cv::Size(w,h),R__,T__,
+                        R0,R1,P0,P1,Q,
+                        CALIB_ZERO_DISPARITY,0,cv::Size(w,h));
+      cv::Mat K0_rect = P0.rowRange(0,3).colRange(0,3);
+      cv::Mat K1_rect = P1.rowRange(0,3).colRange(0,3);
+      cv::Mat D0_rect,D1_rect;
+      D1_rect = D0_rect = (cv::Mat1d(4, 1) << 0,0,0,0);
+      DepthCamera dc;
+      dc.setSteroCamInfo(w,h,
+                         K0, D0, K0_rect, D0_rect, R0, P0,
+                         K1, D1, K1_rect, D1_rect, R1, P1,
+                         T_c0_c1,STEREO_UNRECT);
+      cam_tracker->init(dc,
+                        T_i_c0,
+                        f_para,
+                        vi_para,
+                        dr_para,
+                        0,
                         false);
     }
     if(vi_type_from_yaml == VI_TYPE_EUROC_MAV)
