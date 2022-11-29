@@ -1,23 +1,19 @@
-#  FLVIS
-The implementation of Feedforward-feedback Loop-based Visual Inertial System. If you want to use FLVIS with GPU acceleration, try this [repo](https://github.com/JazzyFeng/FLVIS-gpu).
+# FLVIS with OAK-D camera
+adds support for an OAK-D camera
 
-### 1-Video
-<a href="https://www.youtube.com/embed/U1GmOICc1Ac" target="_blank"><img src="http://img.youtube.com/vi/ljZWb2x6CRQ/0.jpg" 
-alt="cla" width="480" height="300" border="1" /></a>
-
-| EuRoC DataSet MH_05    | Handheld Test in Lab   | FlVIS on UAV Platform  |
-| ---------------------- | ---------------------- |---------------------- |
-| <img src="others/mh05_gif.gif" width="250">  | <img src="others/lab_gif.gif" width="250">  | <img src="others/uav_gif.gif" width="250">  |
 
 ### 2-Relevent Publication:
 Under Review, a pre-print version can be found [here](https://arxiv.org/abs/2007.02250)
 ### 3-Support Hardware/Dataset:
 Intel RealSense D435i Camera <br />
-EuRoC MAV Dataset
+EuRoC MAV Dataset <br />
+OAK-D camera (in stereo mode)
+
 ### 4-Build The Project
 We have tested in the following environment: <br />
 Ubuntu 16.04 + ROS Kinetic <br />
 Ubuntu 18.04 + ROS melodic <br />
+Ubuntu 20.04 + ROS noetic </br >
 Clone the repository to the catkin work space eg. `/catkin_ws/src`
 ````
 git clone https://github.com/HKPolyU-UAV/FLVIS.git
