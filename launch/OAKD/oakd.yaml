@@ -1,0 +1,78 @@
+#type_of_vi:
+#0---d435i_depth
+#1---euroc mav dataset
+#2---d435+pixhawk
+#3---d435i_stereo
+#4---KITTI_stereo_mode
+#5---d435_stereo+pixhawk
+#6---OAKD_stereo+IMU
+
+type_of_vi: 6
+
+image_width: 640
+image_height: 400
+
+#cam0
+cam0_intrinsics: [399.9847717285156, 400.057373046875, 309.4432373046875, 201.7182159423828]#fx fy cx cy
+cam0_distortion_coeffs: [0.0, 0.0, 0.0, 0.0]#k1 k2 r1 r2
+
+## TODO: stereo-inertial calibration
+T_imu_cam0:
+[ 0.0,  0.0,  1.0,   0.0,
+ -1.0,  0.0,  0.0,   0.0,
+  0.0, -1.0,  0.0,   0.0,
+  0.0,  0.0,  0.0,   1.0]
+
+#cam1
+cam1_intrinsics: [397.3124084472656, 397.37384033203125, 330.6202392578125, 206.13140869140625]#fx fy cx cy
+cam1_distortion_coeffs: [0.0, 0.0, 0.0, 0.0]#k1 k2 r1 r2
+T_cam0_cam1:
+[ 0.9996357815842743492, 0.025579174746803665292, -0.0086043918758188704155, 0.07459639705428581345,
+  -0.025583503794177145701, 0.99967263052386292124, -0.00039328721653550248949, -0.0017725531505534869143,
+  0.0085915153893265421068, 0.00061327443436015150449, 0.99996288238492792991, 0.00062034680281513139849,
+  0.0,  0.0,  0.0,  1.0]
+
+is_lite_version:   False
+
+##vifusion parameter
+#Madgwick beta
+vifusion_para1: 0.01
+#proportion of vision feedforware(roll and pich)
+vifusion_para2: 0.03
+#acc-bias feedback parameter
+vifusion_para3: 0.01
+#gyro-bias feedback parameter
+vifusion_para4: 0.01
+#acc saturation level
+vifusion_para5: 0.3
+#gyro saturation level
+vifusion_para6: 0.1
+
+
+#feature relate parameter
+#max features in a grid
+feature_para1: 15
+#min features in a grid
+feature_para2: 30
+#distance of features
+feature_para3: 3
+#goodFeaturesToTrack detector maxCorners
+feature_para4: 600
+#goodFeaturesToTrack detector qualityLevel
+feature_para5: 0.01
+#goodFeaturesToTrack detector minDistance
+feature_para6: 3
+
+#depth recovery
+#IIR filter ratio
+dr_para1: 0.90
+#triangulate range
+dr_para2: 100
+#Dummy depth enable 1.0, enable 0.0,disable
+dr_para3: 1.0
+
+#LocalMapThread
+output_sparse_map: True
+window_size:       10
+
+#LoopClosureTheread
