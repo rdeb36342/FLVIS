@@ -2,7 +2,7 @@
 <launch>
 <!--FLVIS######################################################################################################-->
     <arg name="node_start_delay"  default="1.0" />
-    <param name="/yamlconfigfile" type="string" value="$((find flvis)/launch/Gazebo/gazebo.yaml"/>
+    <param name="/yamlconfigfile" type="string" value="$(find flvis)/launch/Gazebo/gazebo.yaml"/>
     <param name="/voc"            type="string" value="$(find flvis)/voc/voc_orb.dbow3"/>
     <param name="/lite_version"   type="bool"   value="false" />
     <!--In lite version, the visualization will be simplified -->
